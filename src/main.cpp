@@ -30,9 +30,11 @@ int main(void) {
     l.erace(2);
     std::cout << l << "\nsize: " << l.size() << std::endl;
 
-    l.resize(18);
+    l.resize(11);
     std::cout << l << "\nsize: " << l.size() << std::endl;
-   
+
+    l.sort();
+    std::cout << l << std::endl;
 
     return 0;
 }

@@ -73,17 +73,21 @@ public:
         void push_back(const T& value);
         void push_back(T&& value);
         void pop_back();
-        
-        
+                
         //push/pop front
         void push_front(const T& value);
         void push_front(T&& value);
         void pop_front();
 
-
         //resize
         void resize(size_t count);
         void resize(size_t count, const T& value);
+
+        //swap
+        void swap(List& other);
+
+        //sort
+        void sort();
 
         template<typename U>
         friend std::ostream& operator<<(std::ostream& ost, const List<U>& l);
@@ -361,7 +365,6 @@ void List<T>::pop_front() {
         }
 }
 
-
 //resize
 template<typename T>
 void List<T>::resize(size_t count) {
@@ -369,14 +372,41 @@ void List<T>::resize(size_t count) {
 }
 template<typename T>
 void List<T>::resize(size_t count, const T& value) {
+        size_t s = size();
         if(count == size()) return;
         else if (count < size()) {
-                for(size_t i{}; i < size() - count; ++i)
+                for(size_t i{}; i < s - count; ++i)
                         pop_back();
         }
         else {
-                for(size_t i{}; i < count - size() + 1; ++i) 
+                for(size_t i{}; i < count - s; ++i) 
                         push_back(value);
+        }
+}
+
+
+//swap
+template<typename T>
+void List<T>::swap(List<T>& other) {
+        std::swap(head, other.head);
+        std::swap(tail, other.tail);
+        std::swap(msize, other.msize);
+}
+
+
+//sort
+template<typename T>
+void List<T>::sort() {
+        Node* dll = head;
+        while(dll) {
+                Node* tmp = dll->next;
+                while(tmp) {
+                        if (dll->val > tmp->val) {
+                                std::swap(dll->val, tmp->val);
+                        }
+                        tmp = tmp->next;
+                }
+                dll = dll->next;
         }
 }
 
@@ -392,22 +422,5 @@ std::ostream& operator<<(std::ostream& ost, const List<T>& l) {
         return ost;
 }
 
-
 //namespace scop. don't touch finaly exxxx
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
