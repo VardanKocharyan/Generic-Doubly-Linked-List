@@ -60,13 +60,33 @@ public:
         //size_t max_size() const;
         void clear();
 
+        //insert
+        void insert(const size_t pos, const T& value);
+        void insert(const size_t pos, T&& value);
+        void insert(const size_t pos, size_t count, const T& value);
+        void insert(const size_t pos, std::initializer_list<T> list); 
+
+        //erace
+        void erace(const size_t pos);
        
         // push/pop back
         void push_back(const T& value);
         void push_back(T&& value);
         void pop_back();
         
+        
+        //push/pop front
+        void push_front(const T& value);
+        void push_front(T&& value);
+        void pop_front();
 
+
+        //resize
+        void resize(size_t count);
+        void resize(size_t count, const T& value);
+
+        template<typename U>
+        friend std::ostream& operator<<(std::ostream& ost, const List<U>& l);
 };
 
 //ctors
@@ -186,6 +206,89 @@ void List<T>::clear() {
         msize = 0;
 }
 
+//insert
+template<typename T>
+void List<T>::insert(const size_t pos, const T& value) {
+        Node* dll = head->next;
+        if( pos > size()) return;
+        else if(!pos) push_front(value); 
+        else if (pos == size()) push_back(value);
+        else {
+                for(size_t i{1}; i < size(); ++i) {
+                        if(pos == i) {
+                                Node* tmp = new Node(value);
+                                tmp->prev = dll->prev;
+                                dll->prev->next = tmp;
+                                tmp->next = dll;
+                                dll->prev = tmp;
+                                ++msize;
+                                break;
+                        }
+                        dll = dll->next;
+                }
+        }
+}
+template<typename T>
+void List<T>::insert(const size_t pos, T&& value) {
+        Node* dll = head->next;
+        if( pos > size()) return;
+        else if(!pos) push_front(std::move(value)); 
+        else if (pos == size()) push_back(std::move(value));
+        else {
+                for(size_t i{1}; i < size(); ++i) {
+                        if(pos == i) {
+                                Node* tmp = new Node(std::move(value));
+                                tmp->prev = dll->prev;
+                                dll->prev->next = tmp;
+                                tmp->next = dll;
+                                dll->prev = tmp;
+                                ++msize;
+                                break;
+                        }
+                        dll = dll->next;
+                }
+        }
+}
+template<typename T>
+void List<T>::insert(const size_t pos, size_t count, const T& value) {
+        if (pos > size()) return;
+        else {
+                for(size_t i{}; i < count; ++i) {
+                        insert(pos + i, value);
+                }
+        }
+}
+template<typename T>
+void List<T>::insert(const size_t pos, std::initializer_list<T> list) {
+        if (pos > size()) return;
+        else {
+                size_t i{};
+                for(const T& x : list) 
+                        insert(pos + (i++), x);
+        }
+}
+
+
+//erace
+template<typename T>
+void List<T>::erace(const size_t pos) {
+        if (pos >= size()) return;
+        else if (pos == size() - 1) pop_back();
+        else if (!pos) pop_front();
+        else {
+                Node* tmp = head->next;
+                for(size_t i{1}; i < size(); ++i) {
+                        if(pos == i) {
+                                tmp->next->prev = tmp->prev;
+                                tmp->prev->next = tmp->next;
+                                --msize;
+                                delete tmp;
+                                break;
+                        }
+                        tmp = tmp->next;
+                }
+        }
+}
 
 //pop/push back
 template<typename T>
@@ -212,9 +315,99 @@ void List<T>::push_back(T&& value) {
 }
 template<typename T>
 void List<T>::pop_back() {
-        
+        if(empty()) return;
+        else {
+                Node* tmp = tail;
+                tail = tail->prev;
+                tail->next = nullptr;
+                delete tmp;
+                --msize;
+        }
+}
+
+
+//push/pop front
+template<typename T>
+void List<T>::push_front(const T& value) {
+        Node* tmp = new Node(value);
+        if(!head) {
+                head = tail = tmp;
+        } else {
+                tmp->next = head;
+                head = tmp;
+        }
+        ++msize;
+}
+template<typename T>
+void List<T>::push_front(T&& value) {
+        Node* tmp = new Node(std::move(value));
+        if(!head) {
+                head = tail = tmp;
+        } else {
+                tmp->next = head;
+                head = tmp;
+        }
+        ++msize;
+}
+template<typename T>
+void List<T>::pop_front() {
+        if(empty()) return;
+        else {
+                Node* tmp = head;
+                head = head->next;
+                head->prev = nullptr;
+                --msize;
+                delete tmp;
+        }
+}
+
+
+//resize
+template<typename T>
+void List<T>::resize(size_t count) {
+        resize(count, T());
+}
+template<typename T>
+void List<T>::resize(size_t count, const T& value) {
+        if(count == size()) return;
+        else if (count < size()) {
+                for(size_t i{}; i < size() - count; ++i)
+                        pop_back();
+        }
+        else {
+                for(size_t i{}; i < count - size() + 1; ++i) 
+                        push_back(value);
+        }
+}
+
+
+//operator<<
+template<typename T>
+std::ostream& operator<<(std::ostream& ost, const List<T>& l) {
+        typename List<T>::Node* tmp = l.head;
+        while(tmp) {
+                ost << tmp->val << ' ';
+                tmp = tmp->next;
+        }
+        return ost;
+}
+
+
+//namespace scop. don't touch finaly exxxx
 }
 
 
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
