@@ -36,5 +36,9 @@ int main(void) {
     l.sort();
     std::cout << l << std::endl;
 
+    l.merge(r);
+    std::cout << l << std::endl;
+
+
     return 0;
 }

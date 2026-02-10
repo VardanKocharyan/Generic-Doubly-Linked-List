@@ -88,6 +88,12 @@ public:
 
         //sort
         void sort();
+        //reverse
+        void reverse();
+
+        //merge
+        //void merge(List& other);
+
 
         template<typename U>
         friend std::ostream& operator<<(std::ostream& ost, const List<U>& l);
@@ -410,6 +416,49 @@ void List<T>::sort() {
         }
 }
 
+//reverse
+template<typename T>
+void List<T>::reverse() {
+        Node* tmp = head;
+
+        while (tmp) {
+                std::swap(tmp->next, tmp->prev);
+                tmp = tmp->prev;
+        }
+
+        std::swap(head, tail);
+}
+
+//merge
+/*template<typename T>
+void List<T>::merge(List<T>& other) {
+        if (this == &other || !other.head) return;
+
+        Node* tmp = head;
+        Node* omd = other.head;
+
+        while (tmp && omd) {
+                if (tmp->val <= omd->val) {
+                        tmp = tmp->next;
+                }
+                else {
+                        Node* r = new Node(omd->val);
+                        r->prev = tmp->prev;
+                        r->next = tmp;
+                        tmp->prev = r;
+                        omd = omd->next;
+                        ++msize;
+                }
+        }
+
+        if (tmp) return;
+        else {
+                push_back(omd->val);
+                ++msize;
+        }
+        
+}
+*/
 
 //operator<<
 template<typename T>
@@ -421,6 +470,8 @@ std::ostream& operator<<(std::ostream& ost, const List<T>& l) {
         }
         return ost;
 }
+
+
 
 //namespace scop. don't touch finaly exxxx
 }
